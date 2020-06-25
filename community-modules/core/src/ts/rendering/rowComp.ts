@@ -178,19 +178,20 @@ export class RowComp extends Component {
         const headerRowCount = this.beans.headerNavigationService.getHeaderRowCount();
 
         templateParts.push(`<div`);
-        templateParts.push(` role="row"`);
-        templateParts.push(` row-index="${rowIdx}" aria-rowindex="${headerRowCount + this.rowNode.rowIndex + 1}"`);
-        templateParts.push(rowIdSanitised ? ` row-id="${rowIdSanitised}"` : ``);
-        templateParts.push(businessKey ? ` row-business-key="${businessKeySanitised}"` : ``);
-        templateParts.push(` comp-id="${this.getCompId()}"`);
-        templateParts.push(` class="${rowClasses}"`);
-        templateParts.push(` style="height: ${rowHeight}px; ${rowTopStyle} ${userRowStyles}">`);
+        templateParts.push(`role="row"`);
+        templateParts.push(`row-index="${rowIdx}" aria-rowindex="${headerRowCount + this.rowNode.rowIndex + 1}"`);
+        templateParts.push(rowIdSanitised ? `row-id="${rowIdSanitised}"` : ``);
+        templateParts.push(businessKey ? `row-business-key="${businessKeySanitised}"` : ``);
+        templateParts.push(`comp-id="${this.getCompId()}"`);
+        templateParts.push(`class="${rowClasses}"`);
+        templateParts.push(`aria-selected="${this.rowNode.isSelected() ? 'true' : 'false'}"`);
+        templateParts.push(`style="height: ${rowHeight}px; ${rowTopStyle} ${userRowStyles}">`);
 
         // add in the template for the cells
         templateParts.push(contents);
         templateParts.push(`</div>`);
 
-        return templateParts.join('');
+        return templateParts.join(' ');
     }
 
     public getCellForCol(column: Column): HTMLElement {
@@ -1244,7 +1245,10 @@ export class RowComp extends Component {
 
     private onRowSelected(): void {
         const selected = this.rowNode.isSelected();
-        this.eAllRowContainers.forEach((row) => _.addOrRemoveCssClass(row, 'ag-row-selected', selected));
+        this.eAllRowContainers.forEach((row) => {
+            row.setAttribute('aria-selected', selected ? 'true' : 'false');
+            _.addOrRemoveCssClass(row, 'ag-row-selected', selected);
+        });
     }
 
     // called:
